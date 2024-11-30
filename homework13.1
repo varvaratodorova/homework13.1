@@ -1,0 +1,141 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<Task> tasks = new List<Task>();
+        bool exit = false;
+
+        while (!exit)
+        {
+            Console.Clear();
+            Console.WriteLine("Список справ:");
+            Console.WriteLine("1. Додати справу");
+            Console.WriteLine("2. Вивести всі справи");
+            Console.WriteLine("3. Відмітити справу як виконану");
+            Console.WriteLine("4. Видалити справу");
+            Console.WriteLine("5. Вийти");
+            Console.Write("Оберіть дію: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    AddTask(tasks);
+                    break;
+                case "2":
+                    DisplayTasks(tasks);
+                    break;
+                case "3":
+                    MarkTaskAsCompleted(tasks);
+                    break;
+                case "4":
+                    DeleteTask(tasks);
+                    break;
+                case "5":
+                    exit = true;
+                    break;
+                default:
+                    Console.WriteLine("Некоректний вибір! Спробуйте ще раз.");
+                    break;
+            }
+        }
+    }
+
+    static void AddTask(List<Task> tasks)
+    {
+        Console.Clear();
+        Console.Write("Введіть назву нової справи: ");
+        string taskName = Console.ReadLine();
+        if (string.IsNullOrEmpty(taskName))
+        {
+            Console.WriteLine("Назва справи не може бути порожньою.");
+            return;
+        }
+        tasks.Add(new Task(taskName, false));
+        Console.WriteLine("Справа успішно додана!");
+        Console.ReadKey();
+    }
+
+    static void DisplayTasks(List<Task> tasks)
+    {
+        Console.Clear();
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("Список справ порожній.");
+        }
+        else
+        {
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                string status = tasks[i].IsCompleted ? "[Виконано]" : "[Не виконано]";
+                Console.WriteLine($"{i + 1}. {tasks[i].Name} {status}");
+            }
+        }
+        Console.ReadKey();
+    }
+
+    static void MarkTaskAsCompleted(List<Task> tasks)
+    {
+        Console.Clear();
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("Немає справ для відмітки.");
+            Console.ReadKey();
+            return;
+        }
+
+        DisplayTasks(tasks);
+
+        Console.Write("Введіть номер справи, яку хочете відмітити як виконану: ");
+        if (int.TryParse(Console.ReadLine(), out int taskIndex) && taskIndex > 0 && taskIndex <= tasks.Count)
+        {
+            tasks[taskIndex - 1].IsCompleted = true;
+            Console.WriteLine("Справа відмічена як виконана.");
+        }
+        else
+        {
+            Console.WriteLine("Невірний номер справи.");
+        }
+        Console.ReadKey();
+    }
+
+    static void DeleteTask(List<Task> tasks)
+    {
+        Console.Clear();
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("Немає справ для видалення.");
+            Console.ReadKey();
+            return;
+        }
+
+        DisplayTasks(tasks);
+
+        Console.Write("Введіть номер справи, яку хочете видалити: ");
+        if (int.TryParse(Console.ReadLine(), out int taskIndex) && taskIndex > 0 && taskIndex <= tasks.Count)
+        {
+            tasks.RemoveAt(taskIndex - 1);
+            Console.WriteLine("Справа видалена.");
+        }
+        else
+        {
+            Console.WriteLine("Невірний номер справи.");
+        }
+        Console.ReadKey();
+    }
+}
+
+class Task
+{
+    public string Name;
+    public bool IsCompleted;
+
+    public Task(string name, bool isCompleted)
+    {
+        Name = name;
+        IsCompleted = isCompleted;
+    }
+}
